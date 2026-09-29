@@ -20,10 +20,18 @@ class PostDetailView(generic.DetailView):
         return context
 
     def post(self, request, *args, **kwargs):
-        form = CommentForm(request.POST)
 
         if not request.user.is_authenticated:
-            form.add_error(None, "You must be logged in to comment.")
+            form = CommentForm(request.POST)
+            form.add_error(
+                None,
+                "You must be logged in to comment."
+            )
+            return self.render_to_response(
+                self.get_context_data(form=form)
+            )
+
+        form = CommentForm(request.POST)
 
         if form.is_valid():
             comment = form.save(commit=False)
